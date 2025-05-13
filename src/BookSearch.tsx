@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLibraryContext } from './context/LibraryContext';
 import { findBooks } from './utils/DataTools';
 import { BookFormatType, BookFormatListType } from './types';
@@ -13,10 +13,14 @@ import time from './img/time.svg';
 import check from './img/check.svg'
 
 
-function BookSearch () {
+export type BookSearchProps = {
+  initialQuery?: string;
+};
+
+function BookSearch ({ initialQuery }: BookSearchProps) {
   const {state} = useLibraryContext();
   const [formats, setFormats] = useState<BookFormatListType>(['ebook', 'audiobook', 'magazine']);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(initialQuery || '');
   const [searchResults, setSearchResults] = useState<any>([]);
 
   enum SearchStatus {
@@ -26,6 +30,13 @@ function BookSearch () {
   }
 
   const [searchStatus, setSearchStatus] = useState(SearchStatus.Idle);
+
+  // Run search on mount if initialQuery is present
+  useEffect(() => {
+    if (initialQuery && initialQuery.trim().length > 0) {
+      search();
+    }
+  }, []);
 
   const updateFormats = (format: BookFormatType, isEnabled: boolean) => {
     if (isEnabled) {

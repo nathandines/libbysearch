@@ -1,13 +1,22 @@
 import './App.scss';
 import { Tabs, TabPanel } from './components/Tabs';
 import Start  from './Start';
-import BookSearch from './BookSearch';
+import BookSearch, { BookSearchProps } from './BookSearch';
 import LibraryEditList from './LibraryEditList';
 import LibrarySearch from './LibrarySearch';
 import { useLibraryContext } from './context/LibraryContext';
 
+function getBookSearchPropsFromURL(): BookSearchProps {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    initialQuery: params.get('q') || ''
+  };
+}
+
 function App() {
   const {state} = useLibraryContext();
+
+  const { initialQuery } = getBookSearchPropsFromURL();
 
   return (
 
@@ -28,7 +37,7 @@ function App() {
             <LibraryEditList/>
           </TabPanel>
           <TabPanel title="Find Books"  disabled={state.libraries.length===0}>
-            <BookSearch/>
+            <BookSearch initialQuery={initialQuery} />
           </TabPanel>
         </Tabs>
       </main>
