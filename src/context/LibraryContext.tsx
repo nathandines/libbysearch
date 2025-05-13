@@ -11,8 +11,10 @@ export const initialState: AppState = {
 
 const syncPushState = (libraries: LibraryMetadataType[]) => {
   if (window.history.replaceState) {
-    var newurl =`${window.location.protocol}//${window.location.host}${window.location.pathname}?websiteIds=${libraries.map((lib) => lib.websiteId).join(',')}`;
-    window.history.replaceState({path:newurl},'',newurl);
+    const url = new URL(window.location.href);
+    url.searchParams.set('websiteIds', libraries.map((lib) => lib.websiteId).join(','));
+    var newurl = url.toString();
+    window.history.replaceState({ path: newurl }, '', newurl);
   }
 }
 

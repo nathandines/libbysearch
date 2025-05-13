@@ -31,12 +31,15 @@ function BookSearch ({ initialQuery }: BookSearchProps) {
 
   const [searchStatus, setSearchStatus] = useState(SearchStatus.Idle);
 
-  // Run search on mount if initialQuery is present
+  // Run search when both initialQuery and libraries are present (and only once)
+  const [initialSearchDone, setInitialSearchDone] = useState(false);
   useEffect(() => {
-    if (initialQuery && initialQuery.trim().length > 0) {
+    if (!initialSearchDone && initialQuery && initialQuery.trim().length > 0 && state.libraries.length > 0) {
       search();
+      setInitialSearchDone(true);
     }
-  }, []);
+    // eslint-disable-next-line
+  }, [initialQuery, state.libraries]);
 
   const updateFormats = (format: BookFormatType, isEnabled: boolean) => {
     if (isEnabled) {
